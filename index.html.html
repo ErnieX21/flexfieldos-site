@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FlexFieldOS — Construction Management Built for the Field</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0B0E13;
+    --surface:#111520;
+    --surface2:#181C27;
+    --border:rgba(255,255,255,0.07);
+    --border2:rgba(255,255,255,0.12);
+    --amber:#E89410;
+    --amber-dim:#7A4D07;
+    --amber-glow:rgba(232,148,16,0.12);
+    --text:#EAE8E2;
+    --muted:#888580;
+    --muted2:#555250;
+    --r:6px;
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:64px;border-bottom:1px solid var(--border);backdrop-filter:blur(16px);background:rgba(11,14,19,0.85)}
+  .nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:0.5px}
+  .nav-logo span{color:var(--amber)}
+  .nav-links{display:flex;gap:32px;align-items:center}
+  .nav-links a{font-size:14px;color:var(--muted);transition:color 0.2s}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{background:var(--amber);color:#0B0E13;font-size:14px;font-weight:600;padding:8px 20px;border-radius:var(--r);font-family:'Barlow',sans-serif;transition:opacity 0.2s;cursor:pointer;border:none}
+  .nav-cta:hover{opacity:0.88}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 5% 80px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(232,148,16,0.08) 0%,transparent 60%);pointer-events:none}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;mask-image:radial-gradient(ellipse 90% 80% at 50% 50%,black 20%,transparent 80%)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--amber-glow);border:1px solid rgba(232,148,16,0.25);color:var(--amber);font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:6px 16px;border-radius:40px;margin-bottom:28px}
+  .eyebrow-dot{width:6px;height:6px;background:var(--amber);border-radius:50%;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(52px,8vw,96px);font-weight:800;line-height:0.95;letter-spacing:-1px;max-width:900px;margin-bottom:24px}
+  .hero h1 em{color:var(--amber);font-style:normal}
+  .hero p{font-size:18px;color:var(--muted);max-width:560px;margin-bottom:40px;line-height:1.7}
+  .hero-ctas{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center}
+  .btn-primary{background:var(--amber);color:#0B0E13;font-family:'Barlow',sans-serif;font-size:15px;font-weight:600;padding:14px 28px;border-radius:var(--r);border:none;cursor:pointer;transition:opacity 0.2s}
+  .btn-primary:hover{opacity:0.88}
+  .btn-outline{background:transparent;color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;padding:13px 28px;border-radius:var(--r);border:1px solid var(--border2);cursor:pointer;transition:border-color 0.2s,background 0.2s}
+  .btn-outline:hover{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.04)}
+  .hero-badge{margin-top:60px;display:flex;gap:32px;flex-wrap:wrap;justify-content:center}
+  .badge-item{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .badge-item::before{content:'';width:16px;height:2px;background:var(--amber);display:block}
+
+  /* SECTION SHARED */
+  section{padding:100px 5%}
+  .section-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);margin-bottom:16px}
+  .section-heading{font-family:'Barlow Condensed',sans-serif;font-size:clamp(36px,5vw,54px);font-weight:800;line-height:1.05;margin-bottom:20px}
+  .section-sub{font-size:17px;color:var(--muted);max-width:580px;line-height:1.7}
+
+  /* PAIN SECTION */
+  .pain{background:var(--surface)}
+  .pain-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  @media(max-width:768px){.pain-inner{grid-template-columns:1fr}.nav-links{display:none}}
+  .pain-list{margin-top:32px;display:flex;flex-direction:column;gap:20px}
+  .pain-item{display:flex;gap:16px;align-items:flex-start}
+  .pain-icon{width:36px;height:36px;border-radius:8px;background:rgba(232,148,16,0.1);border:1px solid rgba(232,148,16,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .pain-text h4{font-weight:600;font-size:15px;margin-bottom:4px}
+  .pain-text p{font-size:14px;color:var(--muted);line-height:1.6}
+  .enterprise-callout{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:28px;position:relative;overflow:hidden}
+  .enterprise-callout::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),transparent)}
+  .enterprise-callout .label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+  .enterprise-callout .quote{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;line-height:1.25;margin-bottom:12px}
+  .enterprise-callout .sub{font-size:14px;color:var(--muted);line-height:1.65}
+
+  /* MODULES */
+  .modules{max-width:1200px;margin:0 auto}
+  .modules-header{text-align:center;margin-bottom:60px}
+  .modules-header .section-sub{margin:0 auto}
+  .module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .module-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;transition:border-color 0.2s,background 0.2s;position:relative;overflow:hidden}
+  .module-card:hover{border-color:rgba(232,148,16,0.3);background:var(--surface2)}
+  .module-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--amber);opacity:0;transition:opacity 0.2s}
+  .module-card:hover::before{opacity:1}
+  .mod-num{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--amber-dim);margin-bottom:12px}
+  .mod-icon{font-size:22px;margin-bottom:16px}
+  .mod-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;margin-bottom:10px}
+  .mod-desc{font-size:14px;color:var(--muted);line-height:1.65}
+  .mod-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+  .mod-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:40px;background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border)}
+
+  /* AI SPOTLIGHT */
+  .ai-spot{background:var(--surface)}
+  .ai-spot-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+  @media(max-width:768px){.ai-spot-inner{grid-template-columns:1fr}}
+  .log-demo{background:var(--bg);border:1px solid var(--border2);border-radius:12px;padding:24px;font-family:'Barlow Condensed',sans-serif;font-size:14px}
+  .log-demo .log-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;color:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;line-height:1.6;margin-bottom:16px;font-style:italic}
+  .log-arrow{text-align:center;color:var(--amber);font-size:20px;margin-bottom:16px}
+  .log-output{background:var(--surface2);border:1px solid rgba(232,148,16,0.2);border-radius:8px;padding:16px}
+  .log-output .lo-row{display:flex;gap:12px;margin-bottom:10px;font-size:13px;font-family:'Barlow',sans-serif}
+  .log-output .lo-label{color:var(--amber);font-weight:600;min-width:110px;flex-shrink:0}
+  .log-output .lo-val{color:var(--text);line-height:1.5}
+  .ai-features{margin-top:32px;display:flex;flex-direction:column;gap:16px}
+  .ai-feat{display:flex;gap:12px;align-items:flex-start;font-size:14px}
+  .ai-feat-bullet{width:20px;height:20px;border-radius:50%;background:var(--amber-glow);border:1px solid rgba(232,148,16,0.3);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+  .ai-feat-bullet::after{content:'';width:6px;height:6px;background:var(--amber);border-radius:50%}
+
+  /* ROLES */
+  .roles-inner{max-width:1200px;margin:0 auto}
+  .roles-header{text-align:center;margin-bottom:50px}
+  .roles-header .section-sub{margin:0 auto}
+  .role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .role-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;text-align:center}
+  .role-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:40px;margin-bottom:14px}
+  .role-admin{background:rgba(232,148,16,0.15);color:var(--amber);border:1px solid rgba(232,148,16,0.25)}
+  .role-pm{background:rgba(56,110,221,0.15);color:#6B9EEF;border:1px solid rgba(56,110,221,0.2)}
+  .role-super{background:rgba(29,158,117,0.15);color:#3DC9A2;border:1px solid rgba(29,158,117,0.2)}
+  .role-field{background:rgba(136,135,128,0.15);color:var(--muted);border:1px solid var(--border2)}
+  .role-card h4{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-bottom:10px}
+  .role-access{display:flex;flex-direction:column;gap:6px;text-align:left}
+  .access-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+  .access-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .dot-on{background:#3DC9A2}
+  .dot-off{background:var(--muted2)}
+
+  /* WHY */
+  .why{background:var(--surface)}
+  .why-inner{max-width:1200px;margin:0 auto;text-align:center}
+  .why-inner .section-sub{margin:0 auto 50px}
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media(max-width:640px){.why-grid{grid-template-columns:1fr}}
+  .why-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:28px;text-align:left}
+  .why-card h4{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px}
+  .why-card p{font-size:14px;color:var(--muted);line-height:1.65}
+
+  /* CONTACT */
+  .contact-inner{max-width:640px;margin:0 auto;text-align:center}
+  .contact-inner .section-sub{margin:0 auto 40px}
+  .contact-form{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:40px;text-align:left}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  @media(max-width:520px){.form-row{grid-template-columns:1fr}}
+  .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+  .form-group label{font-size:13px;font-weight:600;color:var(--muted)}
+  .form-group input,.form-group select,.form-group textarea{background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);padding:10px 14px;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--amber)}
+  .form-group textarea{resize:vertical;min-height:100px}
+  .form-group select option{background:var(--surface2);color:var(--text)}
+  .form-submit{width:100%;background:var(--amber);color:#0B0E13;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;padding:14px;border-radius:var(--r);border:none;cursor:pointer;transition:opacity 0.2s;margin-top:8px}
+  .form-submit:hover{opacity:0.88}
+  .form-note{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:40px 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+  .footer-logo{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800}
+  .footer-logo span{color:var(--amber)}
+  .footer-copy{font-size:13px;color:var(--muted)}
+  .footer-links{display:flex;gap:24px}
+  .footer-links a{font-size:13px;color:var(--muted);transition:color 0.2s}
+  .footer-links a:hover{color:var(--text)}
+
+  /* TOAST */
+  #toast{position:fixed;bottom:32px;right:32px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:14px 20px;font-size:14px;color:var(--text);display:none;z-index:999;box-shadow:0 4px 24px rgba(0,0,0,0.5)}
+  #toast.show{display:block;animation:slideup 0.3s ease}
+  @keyframes slideup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">FlexField<span>OS</span></div>
+  <div class="nav-links">
+    <a href="#modules">Modules</a>
+    <a href="#roles">Roles</a>
+    <a href="#why">Why Us</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Request Demo</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="eyebrow"><span class="eyebrow-dot"></span>Built for Commercial Construction</div>
+  <h1>One App for<br/>Your <em>Entire</em> Crew</h1>
+  <p>FlexFieldOS gives every person on your team — from the field worker to the operations manager — exactly what they need and nothing they don't.</p>
+  <div class="hero-ctas">
+    <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Request a Demo</button>
+    <button class="btn-outline" onclick="document.getElementById('modules').scrollIntoView({behavior:'smooth'})">See the Modules ↓</button>
+  </div>
+  <div class="hero-badge">
+    <div class="badge-item">Role-Based Access</div>
+    <div class="badge-item">AI-Powered Logs</div>
+    <div class="badge-item">Browser-Based, No Install</div>
+    <div class="badge-item">Built for Commercial Crews</div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="pain-inner">
+    <div>
+      <div class="section-label">The Problem</div>
+      <div class="section-heading">Your current tools weren't<br/>built for this.</div>
+      <div class="pain-list">
+        <div class="pain-item">
+          <div class="pain-icon">📋</div>
+          <div class="pain-text">
+            <h4>Daily logs take 20–30 minutes</h4>
+            <p>Supers are writing structured reports by hand at the end of long days. That time adds up fast across a crew.</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">📁</div>
+          <div class="pain-text">
+            <h4>Drawings get emailed around</h4>
+            <p>Nobody's sure if they're working from the current revision. A superseded drawing on the job site is a liability.</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">📸</div>
+          <div class="pain-text">
+            <h4>Job site photos live on phones</h4>
+            <p>Finding a specific photo from three weeks ago means scrolling through someone's camera roll. Or it's already gone.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="enterprise-callout">
+      <div class="label">On Enterprise Platforms</div>
+      <div class="quote">"Volume-based pricing. Opaque costs. High implementation overhead before you see a single screen."</div>
+      <div class="sub">Enterprise construction platforms charge based on construction volume — not per user — with significant implementation costs before you even get started. FlexFieldOS is priced transparently, scoped clearly, and built specifically for your team from day one.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modules" style="max-width:none;padding:100px 5%">
+  <div class="modules">
+    <div class="modules-header">
+      <div class="section-label">Four Modules</div>
+      <div class="section-heading">Everything your crew needs.<br/>Nothing they don't.</div>
+      <div class="section-sub">FlexFieldOS covers the full job-site workflow — from drawings to daily logs to approvals — in one browser-based app.</div>
+    </div>
+    <div class="module-grid">
+      <div class="module-card">
+        <div class="mod-num">MODULE 01</div>
+        <div class="mod-icon">📊</div>
+        <div class="mod-title">Project Dashboard</div>
+        <div class="mod-desc">Live overview of every active project. Open alerts, pending log approvals, photos uploaded today — all in one place. Click any project for full detail. Includes undo-protected approval workflow.</div>
+        <div class="mod-tags"><span class="mod-tag">Live Metrics</span><span class="mod-tag">Approval Workflow</span><span class="mod-tag">Undo Toast</span></div>
+      </div>
+      <div class="module-card">
+        <div class="mod-num">MODULE 02</div>
+        <div class="mod-icon">📐</div>
+        <div class="mod-title">Drawings</div>
+        <div class="mod-desc">Every drawing tagged by trade and revision number. Your crew always sees the current version — not whatever was emailed last Tuesday. Old revisions are accessible but clearly marked superseded.</div>
+        <div class="mod-tags"><span class="mod-tag">Version Control</span><span class="mod-tag">Trade Tags</span><span class="mod-tag">Upload in 30s</span></div>
+      </div>
+      <div class="module-card">
+        <div class="mod-num">MODULE 03</div>
+        <div class="mod-icon">🤖</div>
+        <div class="mod-title">AI Daily Log</div>
+        <div class="mod-desc">Type rough field notes the way your super actually talks. The AI reads them and generates a complete structured log — work performed, delays, safety, crew count — in about 10 seconds.</div>
+        <div class="mod-tags"><span class="mod-tag">AI-Generated</span><span class="mod-tag">10-Second Turnaround</span><span class="mod-tag">Copy-Ready</span></div>
+      </div>
+      <div class="module-card">
+        <div class="mod-num">MODULE 04</div>
+        <div class="mod-icon">📷</div>
+        <div class="mod-title">Photo Gallery</div>
+        <div class="mod-desc">Every job site photo in one place — tagged by project, trade, and date. Full-size lightbox, uploader name, timestamp. Filter in one tap. No more digging through a phone camera roll.</div>
+        <div class="mod-tags"><span class="mod-tag">Auto-Tagged</span><span class="mod-tag">Lightbox View</span><span class="mod-tag">Undo Delete</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI SPOTLIGHT -->
+<section class="ai-spot">
+  <div class="ai-spot-inner">
+    <div>
+      <div class="section-label">AI-Powered Feature</div>
+      <div class="section-heading">30-minute logs.<br/>Now 30 seconds.</div>
+      <div class="section-sub" style="margin-bottom:0">Your superintendent types rough notes at the end of a long day. FlexFieldOS turns them into a structured, submission-ready daily log using AI.</div>
+      <div class="ai-features">
+        <div class="ai-feat"><div class="ai-feat-bullet"></div><span style="font-size:14px;color:var(--muted)">Accepts messy, plain-language field notes — no formatting required</span></div>
+        <div class="ai-feat"><div class="ai-feat-bullet"></div><span style="font-size:14px;color:var(--muted)">Generates structured output: work performed, delays, safety, crew count</span></div>
+        <div class="ai-feat"><div class="ai-feat-bullet"></div><span style="font-size:14px;color:var(--muted)">One-tap copy — drop it into email or any existing workflow</span></div>
+        <div class="ai-feat"><div class="ai-feat-bullet"></div><span style="font-size:14px;color:var(--muted)">Typical turnaround: ~10 seconds</span></div>
+      </div>
+    </div>
+    <div class="log-demo">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--amber);margin-bottom:12px;font-family:'Barlow',sans-serif">FIELD NOTES INPUT</div>
+      <div class="log-input">"poured slab on north wing, had 8 guys on concrete, electrical sub didn't show again, rain started around 2pm had to cover. Mike says rebar inspection passed. No injuries."</div>
+      <div class="log-arrow">↓  AI generates in ~10 seconds</div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--amber);margin-bottom:12px;font-family:'Barlow',sans-serif">STRUCTURED LOG OUTPUT</div>
+      <div class="log-output">
+        <div class="lo-row"><span class="lo-label">Work Performed</span><span class="lo-val">Concrete pour completed on north wing slab. Crew of 8 on site.</span></div>
+        <div class="lo-row"><span class="lo-label">Delays</span><span class="lo-val">Electrical subcontractor absent. Rain from approximately 14:00 — protective covering deployed.</span></div>
+        <div class="lo-row"><span class="lo-label">Inspections</span><span class="lo-val">Rebar inspection passed (M. Foreman).</span></div>
+        <div class="lo-row" style="margin-bottom:0"><span class="lo-label">Safety</span><span class="lo-val">No incidents reported.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section id="roles" style="padding:100px 5%">
+  <div class="roles-inner">
+    <div class="roles-header">
+      <div class="section-label">Role-Based Access</div>
+      <div class="section-heading">Everyone sees their version of the app.</div>
+      <div class="section-sub">A field worker can't accidentally touch contracts. A superintendent can't approve logs. Access is baked in — not bolted on.</div>
+    </div>
+    <div class="role-grid">
+      <div class="role-card">
+        <span class="role-badge role-admin">Admin</span>
+        <h4>Full Access</h4>
+        <div class="role-access">
+          <div class="access-item"><span class="dot dot-on"></span>All projects</div>
+          <div class="access-item"><span class="dot dot-on"></span>Approve logs</div>
+          <div class="access-item"><span class="dot dot-on"></span>Contracts module</div>
+          <div class="access-item"><span class="dot dot-on"></span>Drawings + Photos</div>
+          <div class="access-item"><span class="dot dot-on"></span>Dashboard metrics</div>
+        </div>
+      </div>
+      <div class="role-card">
+        <span class="role-badge role-pm">Project Manager</span>
+        <h4>Project Oversight</h4>
+        <div class="role-access">
+          <div class="access-item"><span class="dot dot-on"></span>Assigned projects</div>
+          <div class="access-item"><span class="dot dot-on"></span>Approve logs</div>
+          <div class="access-item"><span class="dot dot-off"></span>No contracts</div>
+          <div class="access-item"><span class="dot dot-on"></span>Drawings + Photos</div>
+          <div class="access-item"><span class="dot dot-on"></span>Dashboard metrics</div>
+        </div>
+      </div>
+      <div class="role-card">
+        <span class="role-badge role-super">Superintendent</span>
+        <h4>Field Lead</h4>
+        <div class="role-access">
+          <div class="access-item"><span class="dot dot-on"></span>Their project only</div>
+          <div class="access-item"><span class="dot dot-off"></span>No log approval</div>
+          <div class="access-item"><span class="dot dot-off"></span>No contracts</div>
+          <div class="access-item"><span class="dot dot-on"></span>Drawings + Photos</div>
+          <div class="access-item"><span class="dot dot-on"></span>Submit daily logs</div>
+        </div>
+      </div>
+      <div class="role-card">
+        <span class="role-badge role-field">Field Worker</span>
+        <h4>Focused View</h4>
+        <div class="role-access">
+          <div class="access-item"><span class="dot dot-on"></span>Their project only</div>
+          <div class="access-item"><span class="dot dot-off"></span>No approvals</div>
+          <div class="access-item"><span class="dot dot-off"></span>No contracts</div>
+          <div class="access-item"><span class="dot dot-on"></span>Submit photos</div>
+          <div class="access-item"><span class="dot dot-on"></span>Daily log entry</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why" class="why">
+  <div class="why-inner">
+    <div class="section-label">Why FlexFieldOS</div>
+    <div class="section-heading">Built for your crew.<br/>Not adapted from something generic.</div>
+    <div class="section-sub">FlexFieldOS isn't a rebranded project management tool. It's purpose-built for commercial construction workflows, priced for the real world.</div>
+    <div class="why-grid">
+      <div class="why-card">
+        <h4>Transparent Pricing</h4>
+        <p>No volume-based fees. No opaque implementation costs. A clear scope of work, a clear timeline, and a clear number — before you commit to anything.</p>
+      </div>
+      <div class="why-card">
+        <h4>No Install Required</h4>
+        <p>FlexFieldOS runs in any browser. No app downloads, no IT department involvement, no device restrictions. Your crew can use it today.</p>
+      </div>
+      <div class="why-card">
+        <h4>Built With Your Workflow</h4>
+        <p>Commercial construction vocabulary built in — RFIs, retainage, back-charges, pay apps. The app speaks the same language your crew does.</p>
+      </div>
+      <div class="why-card">
+        <h4>Recoverable by Default</h4>
+        <p>Every delete, every approval has a 5-second undo window. UX safety is built in from day one, because mistakes happen on a job site.</p>
+      </div>
+      <div class="why-card">
+        <h4>E-Signatures Included</h4>
+        <p>The contracts module includes DocuSeal-powered e-signature workflows. No third-party subscription needed for your most common documents.</p>
+      </div>
+      <div class="why-card">
+        <h4>One Vendor, Full Stack</h4>
+        <p>FlexFieldOS is your one stop shop. One app, one point of contact, one scope of work. No patchwork of tools that don't talk to each other.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding:100px 5%">
+  <div class="contact-inner">
+    <div class="section-label">Get Started</div>
+    <div class="section-heading">See it in action.</div>
+    <div class="section-sub">Request a demo or ask a question. We'll follow up within one business day.</div>
+    <div class="contact-form">
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label>First Name</label>
+          <input type="text" placeholder="John" id="f-first"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Last Name</label>
+          <input type="text" placeholder="Smith" id="f-last"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" placeholder="Smith Commercial Construction" id="f-company"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="john@smithcommercial.com" id="f-email"/>
+      </div>
+      <div class="form-group">
+        <label>What are you most interested in?</label>
+        <select id="f-interest">
+          <option value="">Select one...</option>
+          <option>See a live demo</option>
+          <option>Discuss pricing and scope</option>
+          <option>Talk about a custom build</option>
+          <option>Just exploring for now</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message (optional)</label>
+        <textarea placeholder="Tell us about your crew size, current tools, or anything else..." id="f-msg"></textarea>
+      </div>
+      <button class="form-submit" onclick="handleSubmit()">Send Message →</button>
+      <div class="form-note">Or email us directly at <a href="mailto:stephen@crossmeridian.tech" style="color:var(--amber)">stephen@crossmeridian.tech</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">FlexField<span>OS</span></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">by CrossMeridian LLC &middot; Richmond, Virginia</div>
+  </div>
+  <div class="footer-copy">&copy; 2025 CrossMeridian LLC. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="#modules">Modules</a>
+    <a href="#roles">Roles</a>
+    <a href="#contact">Contact</a>
+    <a href="mailto:stephen@crossmeridian.tech">Email</a>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+function handleSubmit(){
+  var first=document.getElementById('f-first').value.trim();
+  var last=document.getElementById('f-last').value.trim();
+  var email=document.getElementById('f-email').value.trim();
+  var company=document.getElementById('f-company').value.trim();
+  var interest=document.getElementById('f-interest').value||'General inquiry';
+  var msg=document.getElementById('f-msg').value.trim();
+  if(!first||!email){showToast('Please fill in at least your name and email.');return;}
+  var body=encodeURIComponent('Name: '+first+' '+last+'\nCompany: '+company+'\nInterest: '+interest+'\n\nMessage:\n'+msg);
+  var subject=encodeURIComponent('FlexFieldOS Demo Request — '+first+' '+last);
+  window.location.href='mailto:stephen@crossmeridian.tech?subject='+subject+'&body='+body;
+  showToast('Opening your email client...');
+}
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.display='block';
+  t.style.position='fixed';
+  t.style.bottom='32px';
+  t.style.right='32px';
+  t.style.background='#111520';
+  t.style.border='1px solid rgba(255,255,255,0.12)';
+  t.style.borderRadius='8px';
+  t.style.padding='14px 20px';
+  t.style.fontSize='14px';
+  t.style.color='#EAE8E2';
+  t.style.zIndex='999';
+  setTimeout(function(){t.style.display='none';},4000);
+}
+</script>
+</body>
+</html>
